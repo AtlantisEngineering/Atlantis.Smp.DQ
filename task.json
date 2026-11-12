@@ -1,0 +1,46 @@
+[
+	{
+		"name": "press_availability",
+		"input": {
+			"type": "mqtt_evb_grouped",
+			"params": {
+				"data_type": "compact",
+				"timeout": 100,
+				"connector_params": {
+					"uri": "mqtt://mqtt-broker:1883?keep_alive_secs=200",
+					"topic": "sibyl/input/use-case/data",
+					"group_by_tags": ["production_line"]
+				}
+			}
+		},
+		"output": {
+			"type": "mqtt",
+			"params": {
+				"uri": "mqtt://mqtt-broker:1883?keep_alive_secs=200",
+				"topic": "sibyl/streamdaq/data-check"
+			}
+		},
+		"window_checks_config": {
+			"windowby_column": "time",
+			"groupby_column": "groupby_column",
+			"window": {
+				"type": "tumbling",
+				"params": {
+					"duration": 120000
+				}
+			},
+			"checks": [
+				{
+					"name": "minimum_message_count",
+					"measure": {
+						"type": "Count",
+						"params": {
+							"column": "time"
+						}
+					},
+					"must_be": ">= 1"
+				}
+			]
+		}
+	}
+]
