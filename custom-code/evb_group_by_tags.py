@@ -37,7 +37,10 @@ def _group_key(*tag_values: str | None) -> tuple[str | None, ...]:
 
 @pw.udf
 def adapt_evbschema(message: str) -> list[pw.Json]:
-    full_evb = json.loads(message)
+    full_evb = json.loads(
+        message,
+        parse_constant=lambda _: None,
+    )
     if (top_measurement_field := EVBKeyNames.MEASUREMENTS.get_matched(full_evb)) is None:
         raise TypeError(
             'Expected a top-level "measurements" field inside the EVB message'
